@@ -7,7 +7,7 @@ import { makeExecutableSchema } from "graphql-tools";
 import { GCPLogger } from "npm-gcp-logging";
 import { GCPAccessToken } from "npm-gcp-token";
 import { default as AuthenticationUtility } from "./utils/AuthenticationUtility.js";
-import { default as LogUtility } from "../../utils/LoggingUtility.js";
+import { default as LogUtility } from "./utils/LoggingUtility.js";
 
 var schema = undefined;
 var yoga = undefined;

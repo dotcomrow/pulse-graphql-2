@@ -31,10 +31,6 @@ resource "cloudflare_worker_script" "project_script" {
   }
 
   plain_text_binding {
-    name = "GCP_BIGQUERY_PROJECT_ID"
-    text = var.GCP_BIGQUERY_PROJECT_ID
-  }
-  plain_text_binding {
     name = "LOG_NAME"
     text = "${var.project_name}_worker_log"
   }

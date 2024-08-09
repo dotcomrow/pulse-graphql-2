@@ -33,7 +33,7 @@
     "type": "module",
     "scripts": {
         "build": "webpack  --config webpack.config.js",
-        "start": "webpack  --config webpack.config.js && npx wrangler dev --remote"
+        "start": "clear && webpack  --config webpack.config.js && npx wrangler dev --remote"
     },
     "dependencies": {
         "@types/node": "^20.14.8"

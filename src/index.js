@@ -6,7 +6,7 @@ import { buildClientSchema, printSchema } from "graphql";
 import { makeExecutableSchema } from "graphql-tools";
 import { GCPLogger } from "npm-gcp-logging";
 import { GCPAccessToken } from "npm-gcp-token";
-
+import { default as AuthenticationUtility } from "./utils/AuthenticationUtility.js";
 var schema = undefined;
 var yoga = undefined;
 
@@ -20,6 +20,11 @@ export default {
     var yoga_ctx = Object.assign({}, env);
     yoga_ctx['DATABASE_TOKEN'] = database_token;
     yoga_ctx['LOGGING_TOKEN'] = logging_token;
+    if (request.headers.get("Authorization"))
+      yoga_ctx['account'] = await AuthenticationUtility.fetchAccountInfo(request.headers.get("Authorization").split(" ")[1]);
+
+    if (!request.headers.get("SpanId"))
+      yoga_ctx['SpanId'] = crypto.randomUUID();
     
     if (!schema) {
       var schemaString = await loadFileFromBucket(env, "graphql_schema.json");

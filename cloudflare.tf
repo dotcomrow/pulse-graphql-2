@@ -42,12 +42,12 @@ resource "cloudflare_worker_script" "project_script" {
 
   plain_text_binding {
     name = "PULSE_DATABASE_PROJECT_ID"
-    text = "pulsedb_dataset"
+    text = "pulsedb-16e0922db52092e4"
   }
 
   plain_text_binding {
     name = "PULSE_DATASET"
-    text = "pulsedb-16e0922db52092e4"
+    text = "pulsedb_dataset"
   }
 
   secret_text_binding {

@@ -4,7 +4,6 @@ import resolvers from "./resolvers/resolvers.js";
 import loadFileFromBucket from "./schema/loadFileFromBucket.js";
 import { buildClientSchema, printSchema } from "graphql";
 import { makeExecutableSchema } from "graphql-tools";
-import { GCPLogger } from "npm-gcp-logging";
 import { GCPAccessToken } from "npm-gcp-token";
 import { default as AuthenticationUtility } from "./utils/AuthenticationUtility.js";
 import { default as LogUtility } from "./utils/LoggingUtility.js";
@@ -57,23 +56,14 @@ export default {
       return yoga(request, yoga_ctx);
     } catch (e) {
       const responseError = serializeError(e);
-      var logging_token = await new GCPAccessToken(
-        env.GCP_LOGGING_CREDENTIALS
-      ).getAccessToken("https://www.googleapis.com/auth/logging.write");
-      await GCPLogger.logEntry(
-        env.GCP_LOGGING_PROJECT_ID,
-        logging_token.access_token,
-        env.LOG_NAME,
-        [
-          {
-            severity: "ERROR",
-            // textPayload: message,
-            jsonPayload: {
-              responseError,
-            },
+      await LogUtility.logEntry(yoga_ctx, [
+        {
+          severity: "ERROR",
+          jsonPayload: {
+            responseError,
           },
-        ]
-      );
+        },
+      ]);
       return new Response(JSON.stringify(responseError), {
         status: 500,
         headers: {

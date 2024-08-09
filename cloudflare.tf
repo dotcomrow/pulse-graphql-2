@@ -35,6 +35,11 @@ resource "cloudflare_worker_script" "project_script" {
     text = "${var.project_name}_worker_log"
   }
 
+  r2_bucket_binding {
+    name        = "SCHEMAS_BUCKET"
+    bucket_name = "schemas"
+  }
+
   plain_text_binding {
     name = "PULSE_DATABASE_PROJECT_ID"
     text = "pulsedb_dataset"

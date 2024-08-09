@@ -30,14 +30,6 @@ export default {
     
     if (!schema) {
       var schemaString = await loadFileFromBucket(env, "graphql_schema.json");
-      await LogUtility.logEntry(yoga_ctx, [
-        {
-          severity: "INFO",
-          jsonPayload: {
-            schema: schemaString,
-          },
-        },
-      ]);
       var schemaObj = buildClientSchema(JSON.parse(schemaString));
       var sdlString = printSchema(schemaObj);
 

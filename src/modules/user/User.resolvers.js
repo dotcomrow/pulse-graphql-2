@@ -116,7 +116,5 @@ export default {
   },
   Mutation: {
     updateUserPreferences: async (parent, args, context) => {},
-    updateUserPrivateKey: async (parent, args, context) => {},
-    updateUserPublicKey: async (parent, args, context) => {},
   },
 };

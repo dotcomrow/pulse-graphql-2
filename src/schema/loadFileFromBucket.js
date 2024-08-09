@@ -11,7 +11,7 @@ const loadFileFromBucket = async (env, schemaFile) => {
 }
 
 const defaultGraphQL = () => {
-    return "default object";
+    return "default";
 }
 
 export default loadFileFromBucket;

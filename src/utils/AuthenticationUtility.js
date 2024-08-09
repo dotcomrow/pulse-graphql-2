@@ -13,15 +13,7 @@ export default {
 
     var accountResponse = JSON.parse(await response.text());
     if (accountResponse == undefined || accountResponse["id"] == undefined) {
-      return new Response(
-        JSON.stringify({ message: "Account not found / token invalid." }),
-        {
-          status: 403,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      return undefined;
     }
 
     return accountResponse;

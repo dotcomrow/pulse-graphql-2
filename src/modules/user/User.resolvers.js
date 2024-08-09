@@ -7,7 +7,7 @@ export default {
     user: async (parent, args, context) => {
       try {
         if (context["account"] == undefined) {
-          return new Error("Account not found / token invalid.");
+          return null;
         }
         var id = context["account"]["id"];
         var user_query_sql =

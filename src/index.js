@@ -7,6 +7,7 @@ import { makeExecutableSchema } from "graphql-tools";
 import { GCPAccessToken } from "npm-gcp-token";
 import { default as AuthenticationUtility } from "./utils/AuthenticationUtility.js";
 import { default as LogUtility } from "./utils/LoggingUtility.js";
+import { uuid } from 'uuidv4';
 
 var schema = undefined;
 var yoga = undefined;
@@ -25,7 +26,7 @@ export default {
       yoga_ctx['account'] = await AuthenticationUtility.fetchAccountInfo(request.headers.get("Authorization").split(" ")[1]);
 
     if (!request.headers.get("SpanId"))
-      yoga_ctx['SpanId'] = crypto.randomUUID();
+      yoga_ctx['SpanId'] = uuid();
     
     if (!schema) {
       var schemaString = await loadFileFromBucket(env, "graphql_schema.json");

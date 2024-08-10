@@ -5,6 +5,10 @@ export default {
     var finalEntries = [];
     for (var entry of entries) {
       entry.spanId = context.SpanId;
+      entry.labels = {
+        environment: context.ENVIRONMENT,
+        spanId: context.SpanId,
+      }
       finalEntries.push(entry);
     }
     await GCPLogger.logEntry(

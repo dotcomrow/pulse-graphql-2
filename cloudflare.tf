@@ -1,7 +1,7 @@
 resource "cloudflare_worker_domain" "project_domain" {
   account_id = var.cloudflare_account_id
   hostname   = "${var.project_name}.${var.domain}"
-  service    = var.project_name
+  service    = "${var.project_name}-${var.environment}"
   zone_id    = var.cloudflare_zone_id
 
   depends_on = [cloudflare_worker_script.project_script]
@@ -15,7 +15,7 @@ resource "cloudflare_worker_route" "project_route" {
 
 resource "cloudflare_worker_script" "project_script" {
   account_id         = var.cloudflare_account_id
-  name               = var.project_name
+  name               = "${var.project_name}-${var.environment}"
   content            = file("${path.module}/dist/index.mjs")
   compatibility_date = "2023-08-28"
   module             = true
@@ -38,11 +38,6 @@ resource "cloudflare_worker_script" "project_script" {
   r2_bucket_binding {
     name        = "SCHEMAS_BUCKET"
     bucket_name = "schemas"
-  }
-
-  plain_text_binding {
-    name = "PULSE_DATABASE_PROJECT_ID"
-    text = "pulsedb-16e0922db52092e4"
   }
 
   plain_text_binding {

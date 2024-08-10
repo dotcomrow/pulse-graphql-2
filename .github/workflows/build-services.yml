@@ -55,13 +55,24 @@ jobs:
           npm install
           npm run build
 
+      - name: Set variables
+        id: setvars
+        run: |
+                if [[ "${{github.base_ref}}" == "dev" || "${{github.ref}}" == "refs/heads/dev" ]]; then
+                  echo "environment=dev" >> $GITHUB_OUTPUT
+                fi
+      
+                if [[ "${{github.base_ref}}" == "prod" || "${{github.ref}}" == "refs/heads/prod" ]]; then
+                  echo "environment=prod" >> $GITHUB_OUTPUT
+                fi
+
       - name: Commit
         run: |
           cd release
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git add .
-          git commit -m "Release ${{ steps.version.outputs.version }}"
+          git commit -m "Release ${{ steps.version.outputs.version }}-${{ steps.setvars.outputs.environment }}"
           git push
 
       - name: Create release
@@ -75,7 +86,7 @@ jobs:
               const response = await github.rest.repos.createRelease({
                 draft: false,
                 generate_release_notes: true,
-                name: process.env.VERSION,
+                name: process.env.VERSION + '-${{ steps.setvars.outputs.environment }}',
                 owner: context.repo.owner,
                 prerelease: false,
                 repo: context.repo.repo,
@@ -95,7 +106,7 @@ jobs:
           {
             "data": {
               "attributes": {
-                "name": "${{ github.event.repository.name }}",
+                "name": "${{ github.event.repository.name }}-${{ steps.setvars.outputs.environment }}",
                 "auto-apply": "true"
               },
               "type": "workspaces"
@@ -143,11 +154,41 @@ jobs:
             --data @payload.json \
             https://app.terraform.io/api/v2/vars
 
+            cat > payload.json <<EOF
+            {
+              "data": {
+                "type":"vars",
+                "attributes": {
+                  "key":"environment",
+                  "value":"${{ steps.setvars.outputs.environment }}",
+                  "description":"project name",
+                  "category":"terraform",
+                  "hcl":false,
+                  "sensitive":false
+                },
+                "relationships": {
+                  "workspace": {
+                    "data": {
+                      "id":"${{ steps.create_workspace.outputs.workspace_id }}",
+                      "type":"workspaces"
+                    }
+                  }
+                }
+              }
+            }
+            EOF
+            curl \
+            --header "Authorization: Bearer ${{ secrets.TFE_TOKEN }}" \
+            --header "Content-Type: application/vnd.api+json" \
+            --request POST \
+            --data @payload.json \
+            https://app.terraform.io/api/v2/vars
+
 
       - uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.1.1
         id: upload
         with:
-              workspace: ${{ github.event.repository.name }}
+              workspace: ${{ github.event.repository.name }}-${{ steps.setvars.outputs.environment }}
               directory: release
 
       - name: Create Apply Run
@@ -155,6 +196,6 @@ jobs:
         id: apply-run
         if: success() || failure()
         with:
-          workspace: ${{ github.event.repository.name }}
+          workspace: ${{ github.event.repository.name }}-${{ steps.setvars.outputs.environment }}
           configuration_version: ${{ steps.upload.outputs.configuration_version_id }}
           plan_only: false

@@ -1,6 +1,6 @@
 resource "cloudflare_worker_domain" "project_domain" {
   account_id = var.cloudflare_account_id
-  hostname   = "${var.project_name}.${var.domain}"
+  hostname   = "${var.project_name}.${var.environment}.${var.domain}"
   service    = "${var.project_name}-${var.environment}"
   zone_id    = var.cloudflare_zone_id
 

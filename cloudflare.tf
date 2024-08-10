@@ -26,13 +26,18 @@ resource "cloudflare_workers_script" "project_script" {
   }
 
   plain_text_binding {
+    name = "ENVIRONMENT"
+    text = var.environment
+  }
+
+  plain_text_binding {
     name = "GCP_LOGGING_PROJECT_ID"
     text = var.GCP_LOGGING_PROJECT_ID
   }
 
   plain_text_binding {
     name = "LOG_NAME"
-    text = "${var.project_name}_worker_log"
+    text = "${var.project_name}_${var.environment}_worker_log"
   }
 
   r2_bucket_binding {
@@ -43,6 +48,11 @@ resource "cloudflare_workers_script" "project_script" {
   plain_text_binding {
     name = "PULSE_DATASET"
     text = "pulsedb_dataset"
+  }
+
+  plain_text_binding {
+    name = "PULSE_DATABASE_PROJECT_ID"
+    text = var.PULSE_DATABASE_PROJECT_ID
   }
 
   secret_text_binding {

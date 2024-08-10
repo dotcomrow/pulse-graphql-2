@@ -3,9 +3,9 @@ export default {
           return "SELECT " +
           "id," +
           "JSON_QUERY_ARRAY(preferences) as preferences," +
-          "private_key," +
-          "public_key," +
-          "updated_at" +
+          "private_key as privateKey," +
+          "public_key as publicKey," +
+          "UNIX_MILLIS(updated_at) as updatedAt" +
           "  FROM `" +
           context.PULSE_DATASET +
           ".user_info` WHERE id = '" +

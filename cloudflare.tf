@@ -13,7 +13,7 @@ resource "cloudflare_worker_route" "project_route" {
   script_name = cloudflare_worker_script.project_script.name
 }
 
-resource "cloudflare_worker_script" "project_script" {
+resource "cloudflare_workers_script" "project_script" {
   account_id         = var.cloudflare_account_id
   name               = "${var.project_name}-${var.environment}"
   content            = file("${path.module}/dist/index.mjs")
@@ -37,7 +37,7 @@ resource "cloudflare_worker_script" "project_script" {
 
   r2_bucket_binding {
     name        = "SCHEMAS_BUCKET"
-    bucket_name = "schemas"
+    bucket_name = "schemas-${var.environment}"
   }
 
   plain_text_binding {

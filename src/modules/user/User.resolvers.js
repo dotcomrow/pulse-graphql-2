@@ -32,6 +32,7 @@ export default {
           {
             severity: "DEBUG",
             jsonPayload: {
+              message: "results",
               res: res,
             },
           },

@@ -1,6 +1,7 @@
 import { GCPBigquery } from "npm-gcp-bigquery";
 import { serializeError } from "serialize-error";
 import { default as LogUtility } from "../../utils/LoggingUtility.js";
+import { default as SQL } from "./SQL.js";
 
 export default {
   Query: {
@@ -10,17 +11,12 @@ export default {
           return null;
         }
         var id = context["account"]["id"];
-        var user_query_sql =
-          "SELECT * FROM `" +
-          context.PULSE_DATASET +
-          ".user_info` WHERE id = '" +
-          id +
-          "'";
+
         await LogUtility.logEntry(context, [
           {
-            severity: "INFO",
+            severity: "DEBUG",
             jsonPayload: {
-              sql: user_query_sql,
+              sql: SQL.user_query_sql(context, id),
               message: "User query executing",
             },
           },
@@ -29,12 +25,12 @@ export default {
         var res = await GCPBigquery.query(
           context.PULSE_DATABASE_PROJECT_ID,
           context.DATABASE_TOKEN,
-          user_query_sql
+          SQL.user_query_sql(context, id)
         );
 
         await LogUtility.logEntry(context, [
           {
-            severity: "INFO",
+            severity: "DEBUG",
             jsonPayload: {
               res: res,
             },
@@ -65,27 +61,11 @@ export default {
             keypair.privateKey
           );
 
-          var sql =
-            "insert into " +
-            context.PULSE_DATASET +
-            ".user_info (id, preferences, private_key, public_key, updated_at) values ('" +
-            id +
-            "', JSON '" +
-            JSON.stringify({
-              darkMode: false,
-              systemSetting: false,
-            }) +
-            "', JSON '" +
-            JSON.stringify(privateKey) +
-            "', JSON '" +
-            JSON.stringify(publicKey) +
-            "', CURRENT_TIMESTAMP())";
-
-            await LogUtility.logEntry(context, [
+          await LogUtility.logEntry(context, [
             {
-              severity: "INFO",
+              severity: "DEBUG",
               jsonPayload: {
-                sql: sql,
+                sql: SQL.insert_sql_new(context, id, privateKey, publicKey),
                 message: "User insert query executing",
               },
             },
@@ -94,13 +74,13 @@ export default {
           await GCPBigquery.query(
             context.PULSE_DATABASE_PROJECT_ID,
             context.DATABASE_TOKEN,
-            sql
+            SQL.insert_sql_new(context, id, privateKey, publicKey)
           );
 
           var res = await GCPBigquery.query(
             context.PULSE_DATABASE_PROJECT_ID,
             context.DATABASE_TOKEN,
-            user_query_sql
+            SQL.user_query_sql(context, id)
           );
           return res[0];
         }
@@ -118,14 +98,121 @@ export default {
     },
   },
   Preferences: {
-    darkMode: async (parent, args, context) => {
-      return JSON.parse(parent).darkMode;
+    key: async (parent) => {
+      return JSON.parse(parent.v).key;
     },
-    systemSetting: async (parent, args, context) => {
-      return JSON.parse(parent).systemSetting;
+    value: async (parent) => {
+      return JSON.parse(parent.v).value;
     },
   },
   Mutation: {
-    updateUserPreferences: async (parent, args, context) => {},
+    updateUserPreferences: async (parent, args, context) => {
+      try {
+        if (context["account"] == undefined) {
+          return null;
+        }
+        var id = context["account"]["id"];
+        await LogUtility.logEntry(context, [
+          {
+            severity: "DEBUG",
+            jsonPayload: {
+              sql: SQL.user_query_sql(context, id),
+              message: "User query executing",
+            },
+          },
+        ]);
+
+        var res = await GCPBigquery.query(
+          context.PULSE_DATABASE_PROJECT_ID,
+          context.DATABASE_TOKEN,
+          SQL.user_query_sql(context, id)
+        );
+
+        await LogUtility.logEntry(context, [
+          {
+            severity: "DEBUG",
+            jsonPayload: {
+              res: res,
+            },
+          },
+        ]);
+
+        if (res.length > 0) {
+          var preferences = res[0].preferences;
+          await LogUtility.logEntry(context, [
+            {
+              severity: "DEBUG",
+              jsonPayload: {
+                message: "search preferences keys",
+                preferences: preferences
+              },
+            },
+          ]);
+          
+          var newArray = [];
+          preferences.forEach((element) => {
+            var el = JSON.parse(element.v);
+            if (el.key != args.preferences.key) {
+              newArray.push({
+                key: el.key,
+                value: el.value
+              });
+            } else {
+              newArray.push({
+                key: args.preferences.key,
+                value: args.preferences.value
+              });
+            }
+          });
+
+          preferences = newArray;
+          await LogUtility.logEntry(context, [
+            {
+              severity: "DEBUG",
+              jsonPayload: {
+                message: "after preferences update",
+                preferences: preferences
+              },
+            },
+          ]);
+
+          await LogUtility.logEntry(context, [
+            {
+              severity: "DEBUG",
+              jsonPayload: {
+                sql: SQL.update_sql(context, id, preferences),
+                message: "User update query executing",
+                arguments: args
+              },
+            },
+          ]);
+
+          await GCPBigquery.query(
+            context.PULSE_DATABASE_PROJECT_ID,
+            context.DATABASE_TOKEN,
+            SQL.update_sql(context, id, preferences)
+          );
+
+          var res = await GCPBigquery.query(
+            context.PULSE_DATABASE_PROJECT_ID,
+            context.DATABASE_TOKEN,
+            SQL.user_query_sql(context, id)
+          );
+          return res[0];
+        } else {
+          return null;
+        }
+      } catch (e) {
+        const responseError = serializeError(e);
+        await LogUtility.logEntry(context, [
+          {
+            severity: "ERROR",
+            jsonPayload: {
+              responseError,
+            },
+          },
+        ]);
+      }
+    },
   },
 };

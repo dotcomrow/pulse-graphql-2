@@ -2,8 +2,7 @@ name: Build and Deploy Services
 
 on:
   push:
-    branches:
-      branches: ["prod", "dev"]
+    branches: ["prod", "dev"]
 
 permissions: write-all
 

@@ -46,10 +46,13 @@ export default {
   },
   Config : {
     config_value: async (parent) => {
-      return JSON.parse(parent).config_value;
+      return parent.config_value;
     },
     config_name: async (parent) => {
-      return JSON.parse(parent).config_name;
+      return parent.config_name;
+    },
+    updatedAt: async (parent) => {
+      return parent.updatedAt;
     },
   }
 };

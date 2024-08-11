@@ -77,7 +77,7 @@ jobs:
       - name: Create release
         uses: "actions/github-script@v6"
         env:
-          VERSION: ${{ steps.version.outputs.version }}-${{ steps.setvars.outputs.environment }}
+          VERSION: ${{ steps.version.outputs.version }}
         with:
           github-token: "${{ github.token }}"
           script: |

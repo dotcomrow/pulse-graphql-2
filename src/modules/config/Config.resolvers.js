@@ -46,10 +46,10 @@ export default {
   },
   Config : {
     config_value: async (parent) => {
-      return JSON.parse(parent.v).config_value;
+      return JSON.parse(parent).config_value;
     },
     config_name: async (parent) => {
-      return JSON.parse(parent.v).config_name;
+      return JSON.parse(parent).config_name;
     },
   }
 };

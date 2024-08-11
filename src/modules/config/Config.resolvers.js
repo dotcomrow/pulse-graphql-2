@@ -26,11 +26,13 @@ export default {
     },
     getConfigByName: async (parent, args, context) => {
       try {
-        return await GCPBigquery.query(
+        var res = await GCPBigquery.query(
           context.PULSE_DATABASE_PROJECT_ID,
           context.DATABASE_TOKEN,
           SQL.config_by_name_query_sql(context, args.config_name)
         );
+        if (res.length > 0) return res[0];
+        else return null;
       } catch (error) {
         const responseError = serializeError(error);
         await LogUtility.logEntry(context, [
@@ -46,16 +48,13 @@ export default {
   },
   Config: {
     config_value: async (parent) => {
-      if (parent.length > 0) return parent[0].config_value;
-      else return parent.config_value;
+      return parent.config_value;
     },
     config_name: async (parent) => {
-      if (parent.length > 0) return parent[0].config_name;
-      else return parent.config_name;
+      return parent.config_name;
     },
     updatedAt: async (parent) => {
-      if (parent.length > 0) return parent[0].updatedAt;
-      else return parent.updatedAt;
+      return parent.updatedAt;
     },
   },
 };

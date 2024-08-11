@@ -85,7 +85,7 @@ jobs:
               const response = await github.rest.repos.createRelease({
                 draft: false,
                 generate_release_notes: true,
-                name: process.env.VERSION + '-${{ steps.setvars.outputs.environment }}',
+                name: process.env.VERSION,
                 owner: context.repo.owner,
                 prerelease: false,
                 repo: context.repo.repo,

@@ -1,5 +1,5 @@
 export default {
-    all_config_query_sql : (context, id) => {
+    all_config_query_sql : (context) => {
           return "SELECT config_name, config_value," +
           "UNIX_MILLIS(updated_at) as updatedAt" +
           " from `" + context.PULSE_DATASET + ".configuration`";

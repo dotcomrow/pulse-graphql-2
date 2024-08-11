@@ -52,7 +52,7 @@ export default {
       return parent.config_name;
     },
     updatedAt: async (parent) => {
-      return parent.updated_at;
+      return parent.updatedAt;
     },
   }
 };

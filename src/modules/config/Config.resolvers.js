@@ -8,9 +8,9 @@ export default {
     getAllConfig: async (parent, args, context) => {
       try {
         return await GCPBigquery.query(
-            context.PULSE_DATABASE_PROJECT_ID,
-            context.DATABASE_TOKEN,
-            SQL.all_config_query_sql(context)
+          context.PULSE_DATABASE_PROJECT_ID,
+          context.DATABASE_TOKEN,
+          SQL.all_config_query_sql(context)
         );
       } catch (error) {
         const responseError = serializeError(error);
@@ -27,9 +27,9 @@ export default {
     getConfigByName: async (parent, args, context) => {
       try {
         return await GCPBigquery.query(
-            context.PULSE_DATABASE_PROJECT_ID,
-            context.DATABASE_TOKEN,
-            SQL.config_by_name_query_sql(context, args.config_name)
+          context.PULSE_DATABASE_PROJECT_ID,
+          context.DATABASE_TOKEN,
+          SQL.config_by_name_query_sql(context, args.config_name)
         );
       } catch (error) {
         const responseError = serializeError(error);
@@ -44,15 +44,18 @@ export default {
       }
     },
   },
-  Config : {
+  Config: {
     config_value: async (parent) => {
-      return parent.config_value;
+      if (parent.length > 0) return parent[0].config_value;
+      else return parent.config_value;
     },
     config_name: async (parent) => {
-      return parent.config_name;
+      if (parent.length > 0) return parent[0].config_name;
+      else return parent.config_name;
     },
     updatedAt: async (parent) => {
-      return parent.updatedAt;
+      if (parent.length > 0) return parent[0].updatedAt;
+      else return parent.updatedAt;
     },
-  }
+  },
 };

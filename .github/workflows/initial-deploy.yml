@@ -36,6 +36,12 @@ jobs:
           scheme: calver
           increment: patch
 
+      - name: Build
+        run: |
+          cd release
+          npm install
+          npm run build
+
       - name: Set variables
         id: setvars
         run: |

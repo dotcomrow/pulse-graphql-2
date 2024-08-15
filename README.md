@@ -1,2 +1,2 @@
-# nodejs-cloudflare-service-template
-Nodejs Cloudflare template service
+# pulse-graphql
+GraphQL project repo

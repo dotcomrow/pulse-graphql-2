@@ -42,7 +42,7 @@ resource "cloudflare_workers_script" "project_script" {
 
   r2_bucket_binding {
     name        = "SCHEMAS_BUCKET"
-    bucket_name = "schemas-${var.environment}"
+    bucket_name = "schemas-pulsedb-${var.environment}"
   }
 
   plain_text_binding {

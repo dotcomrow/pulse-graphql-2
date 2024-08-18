@@ -13,7 +13,7 @@ resource "cloudflare_workers_route" "project_route" {
   script_name = cloudflare_workers_script.project_script.name
 }
 
-resource "null_resource" "project_secret" {
+resource "null_resource" "project_id" {
   triggers = {
     always_run = timestamp()
   }
@@ -62,7 +62,7 @@ resource "cloudflare_workers_script" "project_script" {
 
   plain_text_binding {
     name = "PULSE_DATABASE_PROJECT_ID"
-    text = null_resource.project_secret.output
+    text = null_resource.project_id.output
   }
 
   secret_text_binding {
@@ -79,4 +79,6 @@ resource "cloudflare_workers_script" "project_script" {
     name = "GCP_USERINFO_CREDENTIALS"
     text = var.GCP_USERINFO_CREDENTIALS
   }
+
+  depends_on = [ null_resource.project_id ]
 }

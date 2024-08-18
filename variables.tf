@@ -69,9 +69,3 @@ variable environment {
   type = string
   nullable = false
 }
-
-variable GOOGLE_CREDENTIALS {
-  description = "Google credentials"
-  type = string
-  nullable = false
-}

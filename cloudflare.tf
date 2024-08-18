@@ -19,10 +19,7 @@ resource "null_resource" "project_secret" {
   }
 
   provisioner "local-exec" {
-    command = ""
-    environment = {
-      GOOGLE_CREDNETIALS = var.GOOGLE_CREDENTIALS
-    }
+    command = "${path.module}/scripts/get_project_id.sh"
   }
 }
 

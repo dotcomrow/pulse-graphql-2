@@ -67,7 +67,7 @@ resource "cloudflare_workers_script" "project_script" {
 
   plain_text_binding {
     name = "PULSE_DATABASE_PROJECT_ID"
-    text = local_file.load_project_id.content
+    text = data.local_file.load_project_id.content
   }
 
   secret_text_binding {
@@ -85,5 +85,5 @@ resource "cloudflare_workers_script" "project_script" {
     text = var.GCP_USERINFO_CREDENTIALS
   }
 
-  depends_on = [ local_file.load_project_id ]
+  depends_on = [ data.local_file.load_project_id ]
 }

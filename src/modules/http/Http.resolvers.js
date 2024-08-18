@@ -2,7 +2,6 @@ import { GCPBigquery } from "npm-gcp-bigquery";
 import { serializeError } from "serialize-error";
 import { default as LogUtility } from "../../utils/LoggingUtility.js";
 import { default as SQL } from "./SQL.js";
-import { create } from "domain";
 
 export default {
   Query: {
@@ -109,6 +108,7 @@ export default {
         }
         var id = context["account"]["id"];
         var request = args.request;
+        request.account_id = id;
 
         await LogUtility.logEntry(context, [
           {
@@ -247,26 +247,26 @@ export default {
     },
   },
   Headers: {
-    key: async (parent) => {
+    header_name: async (parent) => {
       return JSON.parse(parent.v).key;
     },
-    value: async (parent) => {
+    header_value: async (parent) => {
       return JSON.parse(parent.v).value;
     },
   },
   Body: {
-    key: async (parent) => {
+    element_name: async (parent) => {
       return JSON.parse(parent.v).key;
     },
-    value: async (parent) => {
+    element_value: async (parent) => {
       return JSON.parse(parent.v).value;
     },
   },
   QueryParams: {
-    key: async (parent) => {
+    query_name: async (parent) => {
       return JSON.parse(parent.v).key;
     },
-    value: async (parent) => {
+    query_value: async (parent) => {
       return JSON.parse(parent.v).value;
     },
   },

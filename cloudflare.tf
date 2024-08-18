@@ -13,6 +13,19 @@ resource "cloudflare_workers_route" "project_route" {
   script_name = cloudflare_workers_script.project_script.name
 }
 
+resource "null_resource" "project_secret" {
+  triggers = {
+    always_run = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = ""
+    environment = {
+      GOOGLE_CREDNETIALS = var.GOOGLE_CREDENTIALS
+    }
+  }
+}
+
 resource "cloudflare_workers_script" "project_script" {
   account_id         = var.cloudflare_account_id
   name               = "${var.project_name}-${var.environment}"

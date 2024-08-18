@@ -70,8 +70,8 @@ variable environment {
   nullable = false
 }
 
-variable PULSE_DATABASE_PROJECT_ID {
-  description = "Pulse database project id"
+variable GOOGLE_CREDENTIALS {
+  description = "Google credentials"
   type = string
   nullable = false
 }

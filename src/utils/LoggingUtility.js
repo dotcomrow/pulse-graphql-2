@@ -1,5 +1,4 @@
 import { GCPLogger } from "npm-gcp-logging";
-import { Plugin } from 'graphql-yoga'
 
 export default {
   async logEntry(context, entries) {

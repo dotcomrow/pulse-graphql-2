@@ -13,7 +13,7 @@ export default {
             "', JSON '" + JSON.stringify(request.request_body) +
             "', '" +
             request.schedule + 
-            "', CURRENT_TIMESTAMP())";
+            "', UNIX_MILLIS(updated_at) as updated_at)";
     },
     update_request_sql : (context, request) => {
         return "UPDATE `" + context.PULSE_DATASET + ".requests` " +
@@ -24,7 +24,7 @@ export default {
             "', request_query = JSON '" + JSON.stringify(request.request_query) +
             "', request_body = JSON '" + JSON.stringify(request.request_body) +
             "', schedule = '" + request.schedule + 
-            "', updated_at = CURRENT_TIMESTAMP() " +
+            "', updated_at = UNIX_MILLIS(updated_at) " +
         "WHERE request_id = '" + request.request_id + "'";
     },
     delete_request_sql : (context, request_id) => {

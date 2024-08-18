@@ -50,6 +50,7 @@ export default {
           credentials: true,
           methods: ["POST"],
         },
+        plugins: [LogUtility.addSpanId()],
       });
     }
 

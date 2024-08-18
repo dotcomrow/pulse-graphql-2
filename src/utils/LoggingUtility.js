@@ -20,10 +20,10 @@ export default {
     );
   },
 
-  async addSpanId() {
+  addSpanId(spanId) {
     return {
-      onResponse({ request, serverContext, response }) {
-        response.headers.set('SpanId', serverContext.SpanId);
+      onResponse({ request, response }) {
+        response.headers.set('SpanId', spanId);
       }
     }
   }

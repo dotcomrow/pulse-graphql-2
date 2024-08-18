@@ -50,7 +50,7 @@ export default {
           credentials: true,
           methods: ["POST"],
         },
-        plugins: [LogUtility.addSpanId()],
+        plugins: [LogUtility.addSpanId(yoga_ctx.SpanId)],
       });
     }
 

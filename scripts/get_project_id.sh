@@ -8,4 +8,6 @@ printf '%s' "$GOOGLE_CREDENTIALS" > key.json
 
 ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=key.json
 
-echo $(./google-cloud-sdk/bin/gcloud projects list --format json --filter name="${project}" | jq -r '.[0].projectId' | tr -d ' ' | tr -dc '[[:print:]]') > project_id
+PROJECT_ID=$(./google-cloud-sdk/bin/gcloud projects list --format json --filter name="${project}" | jq -r '.[0].projectId')
+
+echo $PROJECT_ID | tr -d ' ' | tr -dc '[[:print:]]' > project_id

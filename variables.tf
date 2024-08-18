@@ -69,9 +69,3 @@ variable environment {
   type = string
   nullable = false
 }
-
-variable PULSE_DATABASE_PROJECT_ID {
-  description = "Pulse database project id"
-  type = string
-  nullable = false
-}

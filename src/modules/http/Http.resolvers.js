@@ -116,6 +116,7 @@ export default {
             jsonPayload: {
               sql: SQL.insert_request_sql(context, request),
               message: "Request insert executing",
+              project_id: context.PULSE_DATABASE_PROJECT_ID,
             },
           },
         ]);

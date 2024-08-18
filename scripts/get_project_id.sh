@@ -10,4 +10,6 @@ printf '%s' "$GOOGLE_CREDENTIALS" > key.json
 
 PROJECT_ID=$(./google-cloud-sdk/bin/gcloud projects list --format json --filter name="${project}" | jq -r '.[0].projectId')
 
-echo $PROJECT_ID | tr -d ' ' | tr -dc '[[:print:]]' > project_id
+PROJECT_ID_CLEAN=$(tr -dc '[[:print:]]' <<< "$PROJECT_ID")
+
+echo $PROJECT_ID_CLEAN > project_id

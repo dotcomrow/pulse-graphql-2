@@ -9,4 +9,4 @@ printf '%s' "$GOOGLE_CREDENTIALS" > key.json
 ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=key.json
 
 
-cat `gcloud projects list --format json --filter name="pulsedb-dev" | jq -r '.[0].projectId'` > project_id
+cat `./google-cloud-sdk/bin/gcloud projects list --format json --filter name="pulsedb-dev" | jq -r '.[0].projectId'` > project_id

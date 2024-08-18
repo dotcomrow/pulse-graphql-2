@@ -1,4 +1,5 @@
 import { GCPLogger } from "npm-gcp-logging";
+import { Plugin } from 'graphql-yoga'
 
 export default {
   async logEntry(context, entries) {
@@ -17,5 +18,13 @@ export default {
       context.LOG_NAME,
       finalEntries
     );
+  },
+
+  addSpanId(spanId) {
+    return {
+      onResponse({ request, response }) {
+        response.headers.set('SpanId', spanId);
+      }
+    }
   }
 }

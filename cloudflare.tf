@@ -21,7 +21,7 @@ resource "null_resource" "project_id" {
   provisioner "local-exec" {
     command = "${path.module}/scripts/get_project_id.sh"
     environment = {
-       project = var.project_name
+       project = "pulsedb-${var.environment}"
     }
   }
 }

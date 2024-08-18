@@ -62,7 +62,7 @@ resource "cloudflare_workers_script" "project_script" {
 
   plain_text_binding {
     name = "PULSE_DATABASE_PROJECT_ID"
-    text = var.PULSE_DATABASE_PROJECT_ID
+    text = null_resource.project_secret.output
   }
 
   secret_text_binding {

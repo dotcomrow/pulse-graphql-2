@@ -8,8 +8,4 @@ echo $GOOGLE_CREDENTIALS > service-account.json
 ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=service-account.json
 
 
-cat <<EOF
-{
-  "output": `gcloud projects list --format json --filter name="pulsedb-dev" | jq -r '.[0].projectId'`
-}
-EOF
+cat `gcloud projects list --format json --filter name="pulsedb-dev" | jq -r '.[0].projectId'` > project_id

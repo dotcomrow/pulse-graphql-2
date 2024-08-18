@@ -23,6 +23,11 @@ resource "null_resource" "project_id" {
   }
 }
 
+data "local_file" "load_project_id" {
+    filename = "${path.module}/project_id"
+  depends_on = [ null_resource.project_id ]
+}
+
 resource "cloudflare_workers_script" "project_script" {
   account_id         = var.cloudflare_account_id
   name               = "${var.project_name}-${var.environment}"
@@ -62,7 +67,7 @@ resource "cloudflare_workers_script" "project_script" {
 
   plain_text_binding {
     name = "PULSE_DATABASE_PROJECT_ID"
-    text = null_resource.project_id.output
+    text = local_file.load_project_id.content
   }
 
   secret_text_binding {
@@ -80,5 +85,5 @@ resource "cloudflare_workers_script" "project_script" {
     text = var.GCP_USERINFO_CREDENTIALS
   }
 
-  depends_on = [ null_resource.project_id ]
+  depends_on = [ local_file.load_project_id ]
 }

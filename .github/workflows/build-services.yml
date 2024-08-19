@@ -22,32 +22,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: Checkout
-        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
-        uses: actions/checkout@v3
-
-      - name: Checkout Release branch
-        uses: actions/checkout@v3
-        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
-        with:
-          ref: release
-          path: release
-
-      - name: Get next version
-        uses: reecetech/version-increment@2023.9.3
-        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
-        id: version
-        with:
-          scheme: calver
-          increment: patch
-
-      - name: Build
-        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
-        run: |
-          npm install
-          npm run build
-          cp -r dist/* release
-
       - name: Set variables
         id: setvars
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
@@ -59,6 +33,41 @@ jobs:
           if [[ "${{github.base_ref}}" == "prod" || "${{github.ref}}" == "refs/heads/prod" ]]; then
             echo "environment=prod" >> $GITHUB_OUTPUT
           fi
+
+      - name: Checkout
+        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.setvars.outputs.environment }}
+
+      - name: Get next version
+        uses: reecetech/version-increment@2023.9.3
+        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
+        id: version
+        with:
+          scheme: calver
+          increment: patch
+
+      - name: Create Release branch
+        uses: JamesIves/github-pages-deploy-action@v4
+        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
+        with:
+          branch: release # The branch the action should deploy to.
+          folder: . # The folder the action should deploy.
+
+      - name: Checkout Release branch
+        uses: actions/checkout@v4
+        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
+        with:
+          ref: release
+          path: release
+
+      - name: Build
+        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
+        run: |
+          cd release
+          npm install
+          npm run build
 
       - name: Commit
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
@@ -110,3 +119,15 @@ jobs:
           workspace: ${{ github.event.repository.name }}-${{ steps.setvars.outputs.environment }}
           configuration_version: ${{ steps.upload.outputs.configuration_version_id }}
           plan_only: false
+
+      - name: Delete release branch
+        continue-on-error: true
+        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config pull.rebase true
+          resp=`git ls-remote --heads origin release | wc -m | sed 's/ //g'`
+          if [ $resp -gt 0 ]; then
+            git push origin --delete release
+          fi

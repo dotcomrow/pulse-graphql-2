@@ -44,9 +44,9 @@ jobs:
       - name: Build
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
         run: |
-          cd release
           npm install
           npm run build
+          cp -r dist/* release
 
       - name: Set variables
         id: setvars

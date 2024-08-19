@@ -2,6 +2,7 @@ import { GCPBigquery } from "npm-gcp-bigquery";
 import { serializeError } from "serialize-error";
 import { default as LogUtility } from "../../utils/LoggingUtility.js";
 import { default as SQL } from "./SQL.js";
+import { v4 as uuidv4 } from "uuid";
 
 export default {
   Query: {
@@ -57,13 +58,13 @@ export default {
         if (context["account"] == undefined) {
           return null;
         }
-        var id = context["account"]["id"];
+        var account_id = context["account"]["id"];
 
         await LogUtility.logEntry(context, [
           {
             severity: "DEBUG",
             jsonPayload: {
-              sql: SQL.request_query_by_id_sql(context, args.id),
+              sql: SQL.request_query_by_id_sql(context, account_id, args.request_id),
               message: "Request by ID query executing",
             },
           },
@@ -72,7 +73,7 @@ export default {
         var res = await GCPBigquery.query(
           context.PULSE_DATABASE_PROJECT_ID,
           context.DATABASE_TOKEN,
-          SQL.request_query_by_id_sql(context, args.id)
+          SQL.request_query_by_id_sql(context, account_id, args.request_id)
         );
 
         await LogUtility.logEntry(context, [
@@ -85,7 +86,7 @@ export default {
           },
         ]);
 
-        return res;
+        return res[0];
       } catch (err) {
         await LogUtility.logEntry(context, [
           {
@@ -109,6 +110,7 @@ export default {
         var id = context["account"]["id"];
         var request = args.request;
         request.account_id = id;
+        request.request_id = uuidv4();
 
         await LogUtility.logEntry(context, [
           {
@@ -137,7 +139,13 @@ export default {
           },
         ]);
 
-        return res;
+        var newRes = await GCPBigquery.query(
+          context.PULSE_DATABASE_PROJECT_ID,
+          context.DATABASE_TOKEN,
+          SQL.request_query_by_id_sql(context, request.account_id, request.request_id)
+        );
+
+        return newRes[0];
       } catch (err) {
         await LogUtility.logEntry(context, [
           {
@@ -158,6 +166,8 @@ export default {
         }
         var id = context["account"]["id"];
         var request = args.request;
+        request.account_id = id;
+        request.request_id = args.request_id;
 
         await LogUtility.logEntry(context, [
           {
@@ -185,7 +195,13 @@ export default {
           },
         ]);
 
-        return res;
+        var newRes = await GCPBigquery.query(
+          context.PULSE_DATABASE_PROJECT_ID,
+          context.DATABASE_TOKEN,
+          SQL.request_query_by_id_sql(context, request.account_id, request.request_id)
+        );
+
+        return newRes[0];
       } catch (err) {
         await LogUtility.logEntry(context, [
           {
@@ -204,13 +220,13 @@ export default {
         if (context["account"] == undefined) {
           return null;
         }
-        var id = context["account"]["id"];
+        var account_id = context["account"]["id"];
 
         await LogUtility.logEntry(context, [
           {
             severity: "DEBUG",
             jsonPayload: {
-              sql: SQL.delete_request_sql(context, args.id),
+              sql: SQL.delete_request_sql(context, account_id, args.request_id),
               message: "Request delete executing",
             },
           },
@@ -219,7 +235,7 @@ export default {
         var res = await GCPBigquery.query(
           context.PULSE_DATABASE_PROJECT_ID,
           context.DATABASE_TOKEN,
-          SQL.delete_request_sql(context, args.id)
+          SQL.delete_request_sql(context, account_id, args.request_id)
         );
 
         await LogUtility.logEntry(context, [
@@ -232,7 +248,7 @@ export default {
           },
         ]);
 
-        return res;
+        return args.request_id;
       } catch (err) {
         await LogUtility.logEntry(context, [
           {

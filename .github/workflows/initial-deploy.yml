@@ -15,19 +15,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Create Release branch
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: release # The branch the action should deploy to.
-          folder: . # The folder the action should deploy.
-
-      - name: Checkout Release branch
-        uses: actions/checkout@v3
-        with:
-          ref: release
-          path: release
+        uses: actions/checkout@v4
 
       - name: Get next version
         uses: reecetech/version-increment@2023.9.3
@@ -38,7 +26,6 @@ jobs:
 
       - name: Build
         run: |
-          cd release
           npm install
           npm run build
 
@@ -240,13 +227,13 @@ jobs:
         id: upload_dev
         with:
           workspace: ${{ github.event.repository.name }}-dev
-          directory: release
+          directory: .
 
       - uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.1.1
         id: upload_prod
         with:
           workspace: ${{ github.event.repository.name }}-prod
-          directory: release
+          directory: .
 
       - name: Create Apply Run dev
         uses: hashicorp/tfc-workflows-github/actions/create-run@v1.1.1

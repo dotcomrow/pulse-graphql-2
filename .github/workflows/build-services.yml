@@ -52,14 +52,14 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
         with:
-          branch: release # The branch the action should deploy to.
+          branch: release-${{ steps.setvars.outputs.environment }} # The branch the action should deploy to.
           folder: . # The folder the action should deploy.
 
       - name: Checkout Release branch
         uses: actions/checkout@v4
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
         with:
-          ref: release
+          ref: release-${{ steps.setvars.outputs.environment }}
           path: release
 
       - name: Build
@@ -96,7 +96,7 @@ jobs:
                 prerelease: false,
                 repo: context.repo.repo,
                 tag_name: process.env.VERSION,
-                target_commitish: 'release'
+                target_commitish: 'release-${{ steps.setvars.outputs.environment }}'
               });
               core.exportVariable('RELEASE_ID', response.data.id);
               core.exportVariable('RELEASE_UPLOAD_URL', response.data.upload_url);

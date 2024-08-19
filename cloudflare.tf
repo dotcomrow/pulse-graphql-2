@@ -75,7 +75,7 @@ resource "cloudflare_workers_script" "project_script" {
 
   plain_text_binding {
     name = "VERSION"
-    text = var.version
+    text = var.VERSION
   }
 
   secret_text_binding {

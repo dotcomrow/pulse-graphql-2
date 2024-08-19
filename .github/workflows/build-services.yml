@@ -48,6 +48,13 @@ jobs:
           scheme: calver
           increment: patch
 
+      - name: Create Release branch
+        uses: JamesIves/github-pages-deploy-action@v4
+        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
+        with:
+          branch: release # The branch the action should deploy to.
+          folder: . # The folder the action should deploy.
+
       - name: Checkout Release branch
         uses: actions/checkout@v4
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}

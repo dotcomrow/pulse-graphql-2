@@ -8,6 +8,8 @@ export default {
       entry.labels = {
         environment: context.ENVIRONMENT,
         spanId: context.SpanId,
+        user: context.account,
+        version: context.VERSION,
       }
       finalEntries.push(entry);
     }

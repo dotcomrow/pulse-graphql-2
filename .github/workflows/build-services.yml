@@ -26,32 +26,6 @@ jobs:
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
         uses: actions/checkout@v3
 
-      - name: Create release branch if it doesn't exist
-        continue-on-error: true
-        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git config pull.rebase true
-          resp=`git ls-remote --heads origin release | wc -m | sed 's/ //g'`
-          if [ $resp -gt 0 ]; then
-            git push origin --delete release
-          fi
-
-      - name: Create Release branch
-        uses: JamesIves/github-pages-deploy-action@v4
-        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
-        with:
-          branch: release # The branch the action should deploy to.
-          folder: . # The folder the action should deploy.
-
-      - name: Checkout Release branch
-        uses: actions/checkout@v3
-        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
-        with:
-          ref: release
-          path: release
-
       - name: Get next version
         uses: reecetech/version-increment@2023.9.3
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}

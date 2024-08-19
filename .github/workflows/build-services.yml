@@ -44,12 +44,14 @@ jobs:
       - name: Build
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
         run: |
+          ls -al release/dist
           pwd
           cd release
           npm install
           npm run build
           pwd
           ls -al
+          ls -al dist
 
       - name: Set variables
         id: setvars
@@ -70,6 +72,7 @@ jobs:
           cd release
           pwd
           ls -al
+          ls -al dist
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git add .

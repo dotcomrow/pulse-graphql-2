@@ -26,6 +26,13 @@ jobs:
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
         uses: actions/checkout@v3
 
+      - name: Checkout Release branch
+        uses: actions/checkout@v3
+        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
+        with:
+          ref: release
+          path: release
+
       - name: Get next version
         uses: reecetech/version-increment@2023.9.3
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}

@@ -24,8 +24,21 @@ jobs:
           scheme: calver
           increment: patch
 
+      - name: Create Release branch
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: release # The branch the action should deploy to.
+          folder: . # The folder the action should deploy.
+
+      - name: Checkout Release branch
+        uses: actions/checkout@v4
+        with:
+          ref: release
+          path: release
+
       - name: Build
         run: |
+          cd release
           npm install
           npm run build
 
@@ -215,7 +228,7 @@ jobs:
                 prerelease: false,
                 repo: context.repo.repo,
                 tag_name: process.env.VERSION + '-initial',
-                target_commitish: 'prod'
+                target_commitish: 'release'
               });
               core.exportVariable('RELEASE_ID', response.data.id);
               core.exportVariable('RELEASE_UPLOAD_URL', response.data.upload_url);
@@ -262,3 +275,14 @@ jobs:
               /repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/actions/workflows/initial-deploy.yml/disable
         env:
           GH_TOKEN: ${{ github.token }}
+
+      - name: Delete release branch
+        continue-on-error: true
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config pull.rebase true
+          resp=`git ls-remote --heads origin release | wc -m | sed 's/ //g'`
+          if [ $resp -gt 0 ]; then
+            git push origin --delete release
+          fi

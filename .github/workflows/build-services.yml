@@ -48,6 +48,7 @@ jobs:
           cd release
           npm install
           npm run build
+          pwd
           ls -al
 
       - name: Set variables
@@ -67,6 +68,7 @@ jobs:
         run: |
           pwd
           cd release
+          pwd
           ls -al
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"

@@ -11,7 +11,7 @@ const loadFileFromBucket = async (env, schemaFile) => {
 }
 
 const defaultGraphQL = () => {
-    return "default";
+    return "type Query { hello: String! }";
 }
 
 export default loadFileFromBucket;

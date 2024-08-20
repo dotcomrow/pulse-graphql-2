@@ -42,6 +42,15 @@ jobs:
           npm install
           npm run build
 
+      - name: Commit
+        run: |
+            cd release
+            git config --global user.name "${{ github.actor }}"
+            git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+            git add .
+            git commit -m "Release ${{ steps.version.outputs.version }}"
+            git push
+
       - name: Create workspace
         id: create_workspace_dev
         run: |
@@ -300,13 +309,13 @@ jobs:
         id: upload_dev
         with:
           workspace: ${{ github.event.repository.name }}-dev
-          directory: .
+          directory: release
 
       - uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.1.1
         id: upload_prod
         with:
           workspace: ${{ github.event.repository.name }}-prod
-          directory: .
+          directory: release
 
       - name: Create Apply Run dev
         uses: hashicorp/tfc-workflows-github/actions/create-run@v1.1.1

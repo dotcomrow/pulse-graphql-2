@@ -22,8 +22,19 @@ export default {
     var yoga_ctx = Object.assign({}, env);
     yoga_ctx['DATABASE_TOKEN'] = database_token;
     yoga_ctx['LOGGING_TOKEN'] = logging_token;
-    if (request.headers.get("Authorization"))
+
+    if (request.headers.get("X-Shared-Secret") == env.GLOBAL_SHARED_SECRET) {
+      yoga_ctx['account'] = {
+        id: request.headers.get("X-Auth-User"),
+        email: request.headers.get("X-Auth-Email"),
+        name: request.headers.get("X-Auth-Name"),
+        picture: request.headers.get("X-Auth-Profile"),
+        groups: JSON.parse(request.headers.get("X-Auth-Groups")),
+        provider: request.headers.get("X-Auth-Provider"),
+      };
+    } else if (request.headers.get("Authorization")) {
       yoga_ctx['account'] = await AuthenticationUtility.fetchAccountInfo(request.headers.get("Authorization").split(" ")[1]);
+    } 
 
     if (!request.headers.get("SpanId"))
       yoga_ctx['SpanId'] = uuidv4();

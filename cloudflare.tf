@@ -93,5 +93,10 @@ resource "cloudflare_workers_script" "project_script" {
     text = var.GCP_USERINFO_CREDENTIALS
   }
 
+  secret_text_binding {
+    name = "GLOBAL_SHARED_SECRET"
+    text = var.GLOBAL_SHARED_SECRET
+  }
+
   depends_on = [ data.local_file.load_project_id ]
 }

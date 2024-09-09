@@ -14,7 +14,6 @@ var yoga = undefined;
 
 export default {
   async fetch(request, env, ctx) {
-    self.location = new URL("https://www.google.com");
 
     var logging_token = (await new GCPAccessToken(env.GCP_LOGGING_CREDENTIALS).getAccessToken("https://www.googleapis.com/auth/logging.write")).access_token;
     var database_token = (await new GCPAccessToken(env.GCP_BIGQUERY_CREDENTIALS).getAccessToken("https://www.googleapis.com/auth/bigquery")).access_token;

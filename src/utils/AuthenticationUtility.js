@@ -11,8 +11,8 @@ export default {
       },
     });
 
-    var accountResponse = JSON.parse(await response.text());
-    if (accountResponse == undefined || accountResponse["id"] == undefined) {
+    var accountResponse = await response.json();
+    if (accountResponse == undefined || accountResponse["id"] == undefined || accountResponse['id'] == null) {
       return undefined;
     }
 

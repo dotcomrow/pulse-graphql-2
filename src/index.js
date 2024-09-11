@@ -11,12 +11,14 @@ import { v4 as uuidv4 } from "uuid";
 
 var schema = undefined;
 var yoga = undefined;
+var logging_token = undefined;
+var database_token = undefined;
 
 export default {
   async fetch(request, env, ctx) {
 
-    var logging_token = (await new GCPAccessToken(env.GCP_LOGGING_CREDENTIALS).getAccessToken("https://www.googleapis.com/auth/logging.write")).access_token;
-    var database_token = (await new GCPAccessToken(env.GCP_BIGQUERY_CREDENTIALS).getAccessToken("https://www.googleapis.com/auth/bigquery")).access_token;
+    if (logging_token == undefined) logging_token = (await new GCPAccessToken(env.GCP_LOGGING_CREDENTIALS).getAccessToken("https://www.googleapis.com/auth/logging.write")).access_token;
+    if (database_token == undefined) database_token = (await new GCPAccessToken(env.GCP_BIGQUERY_CREDENTIALS).getAccessToken("https://www.googleapis.com/auth/bigquery")).access_token;
 
     var yoga_ctx = Object.assign({}, env);
     yoga_ctx['DATABASE_TOKEN'] = database_token;
@@ -31,7 +33,7 @@ export default {
         groups: JSON.parse(request.headers.get("X-Auth-Groups")),
         provider: request.headers.get("X-Auth-Provider"),
       };
-    } else if (request.headers.get("Authorization")) {
+    } else if (request.headers.get("Authorization") != null || request.headers.get("Authorization") != undefined) {
       yoga_ctx['account'] = await AuthenticationUtility.fetchAccountInfo(request.headers.get("Authorization").split(" ")[1]);
     } 
 
@@ -67,12 +69,11 @@ export default {
     try {
       return yoga(request, yoga_ctx);
     } catch (e) {
-      const responseError = serializeError(e);
       await LogUtility.logEntry(yoga_ctx, [
         {
           severity: "ERROR",
           jsonPayload: {
-            responseError,
+            error:serializeError(e),
           },
         },
       ]);

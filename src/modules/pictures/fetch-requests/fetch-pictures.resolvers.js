@@ -2,7 +2,6 @@ import { GCPBigquery } from "npm-gcp-bigquery";
 import { serializeError } from "serialize-error";
 import { default as LogUtility } from "../../../utils/LoggingUtility.js";
 import { default as SQL } from "./SQL.js";
-import { v4 as uuidv4 } from "uuid";
 
 export default {
   Query: {

@@ -12,7 +12,7 @@ export default {
                     '${request.account_id}', 
                     '${request.request_id}', 
                     ST_GEOGFROMGEOJSON("${request.location}"), 
-                    '${request.direction}',
+                    ${request.direction},
                     CURRENT_TIMESTAMP(),
                     TIMESTAMP_SECONDS(${request.capture_timestamp})
                 )`;

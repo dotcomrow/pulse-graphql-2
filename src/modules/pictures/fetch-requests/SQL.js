@@ -1,0 +1,22 @@
+export default {
+    fetch_picture_request_sql: (context, id) => {
+        return `SELECT 
+                account_id,
+                request_id,
+                UNIX_MILLIS(updated_at) as updated_at,
+                location,
+                direction,
+                UNIX_MILLIS(capture_timestamp) as capture_timestamp 
+                FROM ${context.PULSE_DATASET}.picture_requests WHERE account_id = '${id}'`;
+    },
+    fetch_picture_request_by_id_sql: (context, account_id, request_id) => {
+        return `SELECT 
+                account_id,
+                request_id,
+                UNIX_MILLIS(updated_at) as updated_at,
+                location,
+                direction,
+                UNIX_MILLIS(capture_timestamp) as capture_timestamp 
+                FROM ${context.PULSE_DATASET}.picture_requests WHERE request_id = '${request_id}' AND account_id = '${account_id}'`;
+    }
+};

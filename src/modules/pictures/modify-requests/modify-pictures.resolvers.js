@@ -4,6 +4,8 @@ import { default as LogUtility } from "../../../utils/LoggingUtility.js";
 import { default as SQL } from "./SQL.js";
 import { default as Fetch_SQL } from "../fetch-requests/SQL.js";
 import { v4 as uuidv4 } from "uuid";
+import { GraphQLError } from "graphql";
+import { default as GeoJSONValidation } from "geojson-validation";
 
 export default {
   Mutation: {
@@ -16,6 +18,36 @@ export default {
         var request = args.request;
         request.account_id = id;
         request.request_id = uuidv4();
+
+        if (request.direction < 0 || request.direction > 360) {
+          return Promise.reject(
+            new GraphQLError(
+              `Direction must be between 0 and 360. Received: ${request.direction}`
+            )
+          );
+        }
+
+        try {
+          JSON.parse(request.location.replace(/'/g, '"'));
+
+          if (
+            !GeoJSONValidation.valid(
+              JSON.parse(request.location.replace(/'/g, '"'))
+            )
+          ) {
+            return Promise.reject(
+              new GraphQLError(
+                `Invalid GeoJSON location. Received: ${request.location}`
+              )
+            );
+          }
+        } catch (err) {
+          return Promise.reject(
+            new GraphQLError(
+              `Invalid GeoJSON location. Received: ${request.location}`
+            )
+          );
+        }
 
         await LogUtility.logEntry(context, [
           {
@@ -45,19 +77,19 @@ export default {
         ]);
 
         await LogUtility.logEntry(context, [
-            {
-              severity: "DEBUG",
-              jsonPayload: {
-                sql: Fetch_SQL.fetch_picture_request_by_id_sql(
-                    context,
-                    request.account_id,
-                    request.request_id
-                  ),
-                message: "fetch inserted request",
-                project_id: context.PULSE_DATABASE_PROJECT_ID,
-              },
+          {
+            severity: "DEBUG",
+            jsonPayload: {
+              sql: Fetch_SQL.fetch_picture_request_by_id_sql(
+                context,
+                request.account_id,
+                request.request_id
+              ),
+              message: "fetch inserted request",
+              project_id: context.PULSE_DATABASE_PROJECT_ID,
             },
-          ]);
+          },
+        ]);
 
         var newRes = await GCPBigquery.query(
           context.PULSE_DATABASE_PROJECT_ID,

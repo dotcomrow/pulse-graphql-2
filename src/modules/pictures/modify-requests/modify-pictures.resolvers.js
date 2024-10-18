@@ -7,6 +7,32 @@ import { v4 as uuidv4 } from "uuid";
 import { GraphQLError } from "graphql";
 import { default as GeoJSONValidation } from "geojson-validation";
 
+const PictureSaveValidation = async (request) => {
+  if (request.direction < 0 || request.direction > 360) {
+    return new GraphQLError(
+        `Direction must be between 0 and 360. Received: ${request.direction}`
+      );
+  }
+
+  try {
+    JSON.parse(request.location.replace(/'/g, '"'));
+
+    if (
+      !GeoJSONValidation.valid(
+        JSON.parse(request.location.replace(/'/g, '"'))
+      )
+    ) {
+      return new GraphQLError(
+          `Invalid GeoJSON location. Received: ${request.location}`
+        );
+    }
+  } catch (err) {
+    return new GraphQLError(
+        `Invalid GeoJSON location. Received: ${request.location}`
+      );
+  }
+};
+
 export default {
   Mutation: {
     savePictureRequest: async (parent, args, context) => {
@@ -19,34 +45,9 @@ export default {
         request.account_id = id;
         request.request_id = uuidv4();
 
-        if (request.direction < 0 || request.direction > 360) {
-          return Promise.reject(
-            new GraphQLError(
-              `Direction must be between 0 and 360. Received: ${request.direction}`
-            )
-          );
-        }
-
-        try {
-          JSON.parse(request.location.replace(/'/g, '"'));
-
-          if (
-            !GeoJSONValidation.valid(
-              JSON.parse(request.location.replace(/'/g, '"'))
-            )
-          ) {
-            return Promise.reject(
-              new GraphQLError(
-                `Invalid GeoJSON location. Received: ${request.location}`
-              )
-            );
-          }
-        } catch (err) {
-          return Promise.reject(
-            new GraphQLError(
-              `Invalid GeoJSON location. Received: ${request.location}`
-            )
-          );
+        var validation = await PictureSaveValidation(request);
+        if (validation) {
+          return Promise.reject(validation);
         }
 
         await LogUtility.logEntry(context, [

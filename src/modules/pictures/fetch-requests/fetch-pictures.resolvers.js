@@ -107,5 +107,53 @@ export default {
         return null;
       }
     },
+    fetchPictureRequestsByBoundingBox: async (parent, args, context) => {
+      try {
+        await LogUtility.logEntry(context, [
+          {
+            severity: "DEBUG",
+            jsonPayload: {
+              sql: SQL.fetch_picture_requests_within_bbox_sql(
+                context,
+                args.bbox
+              ),
+              message: "Request by ID query executing",
+            },
+          },
+        ]);
+
+        var res = await GCPBigquery.query(
+          context.PULSE_DATABASE_PROJECT_ID,
+          context.DATABASE_TOKEN,
+          SQL.fetch_picture_requests_within_bbox_sql(
+            context,
+            args.bbox
+          )
+        );
+
+        await LogUtility.logEntry(context, [
+          {
+            severity: "DEBUG",
+            jsonPayload: {
+              message: "results",
+              res: res,
+            },
+          },
+        ]);
+
+        return res;
+      } catch (e) {
+        await LogUtility.logEntry(context, [
+          {
+            severity: "ERROR",
+            jsonPayload: {
+              message: "Fetch picture requests by bounding box failed",
+              error: serializeError(e),
+            },
+          },
+        ]);
+        return null;
+      }
+    },
   },
 };

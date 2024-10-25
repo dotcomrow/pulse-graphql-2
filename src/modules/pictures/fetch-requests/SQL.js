@@ -18,5 +18,15 @@ export default {
                 direction,
                 UNIX_MILLIS(capture_timestamp) as capture_timestamp 
                 FROM ${context.PULSE_DATASET}.picture_requests WHERE request_id = '${request_id}' AND account_id = '${account_id}'`;
-    }
+    },
+    fetch_picture_requests_within_bbox_sql: (context, bbox) => {
+        return `SELECT 
+                account_id,
+                request_id,
+                UNIX_MILLIS(updated_at) as updated_at,
+                location,
+                direction,
+                UNIX_MILLIS(capture_timestamp) as capture_timestamp 
+                FROM ${context.PULSE_DATASET}.picture_requests WHERE ST_WITHIN(location, ST_GEOGFROMTEXT('POLYGON((${bbox}))')`;
+    },
 };

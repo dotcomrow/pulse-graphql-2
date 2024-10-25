@@ -117,7 +117,7 @@ export default {
                 context,
                 args.bbox
               ),
-              message: "Request by ID query executing",
+              message: "Request by bounding box query executing",
             },
           },
         ]);

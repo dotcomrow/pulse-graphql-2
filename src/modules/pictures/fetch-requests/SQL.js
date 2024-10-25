@@ -27,6 +27,6 @@ export default {
                 location,
                 direction,
                 UNIX_MILLIS(capture_timestamp) as capture_timestamp 
-                FROM ${context.PULSE_DATASET}.picture_requests WHERE ST_WITHIN(location, ST_GEOGFROMTEXT('POLYGON((${bbox}))')`;
+                FROM ${context.PULSE_DATASET}.picture_requests WHERE ST_WITHIN(location, ST_GEOGFROMTEXT('POLYGON((${bbox}))'))`;
     },
 };

@@ -7,8 +7,8 @@ export default {
                 direction,
                 updated_at,
                 capture_timestamp,
-                requestTitle,
-                requestDescription,
+                request_title,
+                request_description,
                 bidType) 
                 VALUES 
                 (

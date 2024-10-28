@@ -6,7 +6,10 @@ export default {
                 location, 
                 direction,
                 updated_at,
-                capture_timestamp) 
+                capture_timestamp,
+                requestTitle,
+                requestDescription,
+                bidType) 
                 VALUES 
                 (
                     '${request.account_id}', 
@@ -14,7 +17,10 @@ export default {
                     ST_GEOGFROMGEOJSON("${request.location}"), 
                     ${request.direction},
                     CURRENT_TIMESTAMP(),
-                    TIMESTAMP_MILLIS(${request.capture_timestamp})
+                    TIMESTAMP_MILLIS(${request.capture_timestamp}),
+                    '${request.requestTitle}',
+                    '${request.requestDescription}',
+                    '${request.bidType}'
                 )`;
     }
 };

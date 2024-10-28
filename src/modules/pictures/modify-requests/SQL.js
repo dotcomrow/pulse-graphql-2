@@ -14,7 +14,7 @@ export default {
                     ST_GEOGFROMGEOJSON("${request.location}"), 
                     ${request.direction},
                     CURRENT_TIMESTAMP(),
-                    TIMESTAMP_SECONDS(${request.capture_timestamp})
+                    ${request.capture_timestamp}
                 )`;
     }
 };

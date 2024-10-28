@@ -86,7 +86,7 @@ export default {
                 request.account_id,
                 request.request_id
               ),
-              message: "fetch inserted request",
+              message: "save inserted request",
               project_id: context.PULSE_DATABASE_PROJECT_ID,
             },
           },

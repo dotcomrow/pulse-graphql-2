@@ -21,7 +21,7 @@ export default {
     },
     fetch_picture_requests_within_bbox_sql: (context, bbox, limit, offset) => {
         return `SELECT 
-                (select count(*) from ${context.PULSE_DATASET}.picture_requests WHERE ST_WITHIN(location, ST_GEOGFROMTEXT('POLYGON((${bbox}))')) as total,
+                (select count(*) from ${context.PULSE_DATASET}.picture_requests WHERE ST_WITHIN(location, ST_GEOGFROMTEXT('POLYGON((${bbox}))'))) as total,
                 account_id,
                 request_id,
                 UNIX_MILLIS(updated_at) as updated_at,

@@ -19,7 +19,7 @@ export default {
                 UNIX_MILLIS(capture_timestamp) as capture_timestamp 
                 FROM ${context.PULSE_DATASET}.picture_requests WHERE request_id = '${request_id}' AND account_id = '${account_id}'`;
     },
-    fetch_picture_requests_within_bbox_sql: (context, bbox) => {
+    fetch_picture_requests_within_bbox_sql: (context, bbox, limit, offset) => {
         return `SELECT 
                 account_id,
                 request_id,
@@ -30,6 +30,6 @@ export default {
                 request_title,
                 request_description,
                 bid_type 
-                FROM ${context.PULSE_DATASET}.picture_requests WHERE ST_WITHIN(location, ST_GEOGFROMTEXT('POLYGON((${bbox}))'))`;
+                FROM ${context.PULSE_DATASET}.picture_requests WHERE ST_WITHIN(location, ST_GEOGFROMTEXT('POLYGON((${bbox}))')) limit ${limit} offset ${offset}`;
     },
 };

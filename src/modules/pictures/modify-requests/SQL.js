@@ -9,7 +9,7 @@ export default {
                 capture_timestamp,
                 request_title,
                 request_description,
-                bidType) 
+                bid_type) 
                 VALUES 
                 (
                     '${request.account_id}', 
@@ -18,9 +18,9 @@ export default {
                     ${request.direction},
                     CURRENT_TIMESTAMP(),
                     TIMESTAMP_MILLIS(${request.capture_timestamp}),
-                    '${request.requestTitle}',
-                    '${request.requestDescription}',
-                    '${request.bidType}'
+                    '${request.request_title}',
+                    '${request.request_description}',
+                    '${request.bid_type}'
                 )`;
     }
 };

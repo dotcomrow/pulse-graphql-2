@@ -26,10 +26,10 @@ export default {
                 UNIX_MILLIS(updated_at) as updated_at,
                 location,
                 direction,
-                UNIX_MILLIS(capture_timestamp) as capture_timestamp 
+                UNIX_MILLIS(capture_timestamp) as capture_timestamp,
                 request_title,
                 request_description,
-                bid_type
+                bid_type 
                 FROM ${context.PULSE_DATASET}.picture_requests WHERE ST_WITHIN(location, ST_GEOGFROMTEXT('POLYGON((${bbox}))'))`;
     },
 };

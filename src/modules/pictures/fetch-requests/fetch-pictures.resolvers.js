@@ -116,7 +116,9 @@ export default {
             jsonPayload: {
               sql: SQL.fetch_picture_requests_within_bbox_sql(
                 context,
-                bbox
+                bbox,
+                args.limit,
+                args.offset
               ),
               message: "Request by bounding box query executing",
             },
@@ -128,7 +130,9 @@ export default {
           context.DATABASE_TOKEN,
           SQL.fetch_picture_requests_within_bbox_sql(
             context,
-            bbox
+            bbox,
+            args.limit,
+            args.offset
           )
         );
 

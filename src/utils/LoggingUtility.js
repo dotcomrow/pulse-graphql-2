@@ -8,7 +8,7 @@ export default {
       entry.labels = {
         environment: context.ENVIRONMENT,
         spanId: context.SpanId,
-        user: context.account.id,
+        user: (context.account) ? context.account.id : "unauthenticated",
         version: context.VERSION,
       }
       finalEntries.push(entry);
